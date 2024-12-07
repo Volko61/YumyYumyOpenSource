@@ -1,0 +1,33 @@
+// Custom SCSS Theme: custom.scss
+
+// Import Bootstrap's default variables
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+// Primary Color Palette
+$primary: #A8D5BA;  // Fresh Green
+$secondary: #FFE8D6;  // Soft Beige
+$success: #F6C667;  // Sunlit Yellow
+$info: #457B9D;  // Muted Blue
+$warning: #F4A261;  // Warm Orange
+$danger: #E63946;  // Berry Red
+$light: #F0F4F8;  // Light Gray
+$dark: #2A2E35;  // Charcoal Gray
+
+// Custom Accent Colors
+$custom-purple: #B892FF; // Soft Purple
+
+// Override default Bootstrap colors
+$theme-colors: (
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+    "light": $light,
+    "dark": $dark
+);
+
+// Import Bootstrap's main styles
+@import "bootstrap/scss/bootstrap";

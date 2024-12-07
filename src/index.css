@@ -1,0 +1,15 @@
+
+/* Global Styles */
+body {
+    background: linear-gradient(120deg, #ff9a8b, #fecfef, #fe97b7, #57c1eb);
+    background-size: 300% 300%;
+    animation: gradientBG 10s ease infinite;
+    /* overflow: hidden; */
+}
+
+/* Root Container */
+#root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}

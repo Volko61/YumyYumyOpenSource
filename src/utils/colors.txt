@@ -1,0 +1,17 @@
+Primary
+Green (#A8D5BA)
+Orange (#F4A261)
+White (#FFFFFF)
+
+Secondary 
+Beige (#FFE8D6)
+Blue (#457B9D)
+Yellow (#F6C667)
+
+Accent
+Red (#E63946)
+Purple (#B892FF)
+
+Neutral 
+Light Gray (#F0F4F8)
+Gray (#2A2E35)

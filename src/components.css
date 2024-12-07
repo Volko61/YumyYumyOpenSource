@@ -1,0 +1,44 @@
+/* components.css */
+
+/* Falling Fruits Container */
+.falling-fruits {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Ensure fruits are behind the messages */
+}
+
+/* Individual Fruit Styling */
+.fruit {
+    position: absolute;
+    will-change: transform;
+}
+
+.fruit img {
+    width: 30px;
+    height: 30px;
+}
+
+/* Mask Effect for Feather and Logo */
+.feathered-mask, .logo-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.feathered-mask {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 60%, rgba(255, 255, 255, 0) 100%);
+}
+
+.logo-mask {
+    width: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    fill: rgba(0, 0, 0, 0.5); /* Dark overlay */
+}

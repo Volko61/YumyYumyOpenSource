@@ -1,0 +1,164 @@
+To achieve your desired functionality, here’s a detailed explanation of how to design the app to dynamically build the `meals` list by interacting with the user:
+
+### Features Breakdown:
+1. **Dynamic Questioning**: Based on incomplete or missing information, the bot needs to ask follow-up questions.
+2. **Incremental Updates**: As the user provides answers, the bot adds the information to the corresponding `Meal` objects.
+3. **Meal Data Management**: Use the `MealContext` to store and update meals dynamically.
+4. **Bot Response Logic**: Implement intelligent prompts and contextual conversations using `generateBotResponse`.
+5. **User Interaction Handling**: Update state in `ChatProvider` as the conversation progresses.
+
+---
+
+### Implementation Steps
+
+#### **1. Modify `generateBotResponse` to Extract Information**
+Update `generateBotResponse` to process user input intelligently and extract relevant details (like days, meal type, preferences, etc.).
+
+```javascript
+async function tryToFillMealsWithTheUserAnswer(answer) {
+  const extractedData = await generateBotResponse(`
+    Extract the following information from the user's input:
+    - Meal types (e.g., breakfast, lunch, dinner)
+    - Number of people
+    - Any ingredient preferences or restrictions
+    - Days for meal planning
+    - Specific dish suggestions
+
+    User input: "${answer}"
+  `);
+
+  return JSON.parse(extractedData); // Assuming response is a JSON string.
+}
+```
+
+---
+
+#### **2. Handle Incremental Updates in `ChatProvider`**
+Update the bot's conversation logic to dynamically add or modify meal information.
+
+```javascript
+const handleSend = async (message) => {
+  if (!message.trim()) return;
+
+  // Add user's message to the chat
+  const userMessage = { role: 'user', text: message };
+  setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+  // Analyze the user's response
+  const extractedData = await tryToFillMealsWithTheUserAnswer(message);
+
+  // Update MealContext based on extracted data
+  if (extractedData) {
+    const { meals, additionalQuestions } = updateMeals(extractedData);
+
+    // Update meals in context
+    setMeals((prevMeals) => [...prevMeals, ...meals]);
+
+    // Generate bot's follow-up response
+    const botResponseText = additionalQuestions.length
+      ? additionalQuestions.join(' ')
+      : 'Great! The meals are planned.';
+    
+    const botResponse = { role: 'bot', text: botResponseText };
+    setMessages((prevMessages) => [...prevMessages, botResponse]);
+  }
+};
+```
+
+---
+
+#### **3. Update Meals Dynamically**
+Use the `Meal` class and `MealContext` to dynamically build meals based on extracted data.
+
+```javascript
+const updateMeals = (data) => {
+  const { days, mealTypes, people, preferences, restrictions, dishSuggestions } = data;
+  const newMeals = [];
+  const additionalQuestions = [];
+
+  days.forEach((day) => {
+    mealTypes.forEach((type) => {
+      const meal = new Meal();
+      meal.setDate(day);
+      if (dishSuggestions?.[type]) {
+        meal.setRecipe(dishSuggestions[type].recipe);
+        meal.ingredients = dishSuggestions[type].ingredients;
+      } else {
+        additionalQuestions.push(`What would you like for ${type} on ${day}?`);
+      }
+      newMeals.push(meal);
+    });
+  });
+
+  return { meals: newMeals, additionalQuestions };
+};
+```
+
+---
+
+#### **4. Enhance Bot Personality**
+Use a system prompt that defines the bot's personality and context. Update the `systemPrompt` dynamically.
+
+```javascript
+setSystemPrompt((prevPrompt) => `
+  You are YumyYumy, a helpful cooking assistant. Here is the context:
+  ${JSON.stringify(meals)}
+  
+  The user wants to plan their meals. Extract missing information by asking friendly questions.
+`);
+```
+
+---
+
+#### **5. Update the Meal Context**
+Update the `MealContext` state to manage the list of meals as the user provides input.
+
+```javascript
+const addMeal = (meal) => {
+  setMeals((prevMeals) => [...prevMeals, meal]);
+};
+
+const removeMeal = (meal) => {
+  setMeals((prevMeals) => prevMeals.filter((m) => m !== meal));
+};
+```
+
+---
+
+#### **6. UI Update and Scroll Behavior**
+Ensure the UI scrolls to the latest message in the chat.
+
+```javascript
+useEffect(() => {
+  scrollToBottom();
+}, [messages]);
+
+const scrollToBottom = () => {
+  chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+};
+```
+
+---
+
+### Example Output:
+
+#### **Conversation Flow**
+- **Bot**: *Hi, I'm YumyYumy and I'm here to help you to plan your meals for this week!*
+- **User**: *Can you plan meals for the next two days?*
+- **Bot**: *Sure! Do you want meals for breakfast, lunch, and dinner or just dinner?*
+- **User**: *Just dinner for two people.*
+- **Bot**: *Noted! Any dietary restrictions or preferences?*
+- **User**: *No crabs, but we love carrots.*
+- **Bot**: *Great! How about carrot salad for tomorrow and spaghetti for the next day?*
+
+---
+
+### Final Meals Context:
+```javascript
+[
+  new Meal('2023-11-13', ['carrots', 'lettuce'], 'Mix carrots and lettuce for a salad.'),
+  new Meal('2023-11-14', ['spaghetti', 'tomatoes', 'ketchup'], 'Cook spaghetti and mix with tomatoes and ketchup.')
+];
+```
+
+This structure allows your app to interactively build the meal plan while keeping the user engaged.
