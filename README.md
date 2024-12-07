@@ -1,4 +1,5 @@
 # YumyYumyOpenSource
+![image](https://github.com/user-attachments/assets/b98000e3-37b7-493d-a8b4-92908332f372)
 
 A AI-powered website that allows you to plan your meals for the week. You can test it here : https://yumyyumy.web.app (Completely free and no ads, no account creating etc)
 
